@@ -20,7 +20,7 @@ import httpx
 from mingjian.domain.models import Block, Limits, MingjianError, Parsed
 from mingjian.parsers.documents import checkpoint
 
-DEFAULT_ENDPOINT = "http://117.187.209.14:8003"
+DEFAULT_ENDPOINT = "http://127.0.0.1:8003"
 MAX_RESPONSE = 100 * 1024**2
 
 

@@ -1,0 +1,5 @@
+# 源码分发与第三方许可
+
+源码仓库不携带Python依赖二进制或字体文件。Python组件许可随安装的wheel包提供；构建时 scripts/prepare_release.py 会收集组件许可。已构建的网页包含React等代码，其许可位于npm目录。字体按resources-fonts.json下载，OFL文本随仓库保留。
+
+完整本机交付包与公开源码的文件范围不同；dependency-inventory.json是实际开发依赖清单，不代表所有组件源码都已复制到本仓库。新增代码暂未选择通用开源许可证，进一步授权范围由实际权利人确认。
