@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from mingjian.domain.models import VERSION
 
 root = Path(SPECPATH).parent
 datas = [(str(root/'src/mingjian/resources'), 'mingjian/resources'),
@@ -15,6 +16,6 @@ exe = EXE(pyz,a.scripts,[],exclude_binaries=True,name='明鉴网页',debug=False
 coll = COLLECT(exe,a.binaries,a.datas,strip=False,upx=False,name='明鉴网页')
 if sys.platform=='darwin':
     app = BUNDLE(coll,name='明鉴网页.app',icon=str(root/'packaging/mingjian.icns'),
-                 bundle_identifier='local.mingjian.web',version='1.1.0',
+                 bundle_identifier='local.mingjian.web',version=VERSION,
                  info_plist={'CFBundleDisplayName':'明鉴网页','LSUIElement':True,'LSMinimumSystemVersion':'11.0',
                              'NSHighResolutionCapable':True})

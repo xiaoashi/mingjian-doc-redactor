@@ -8,6 +8,7 @@ import io
 from pathlib import Path
 
 import httpx
+from mingjian.domain.models import VERSION
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -33,7 +34,7 @@ def verify():
                     else:
                         raise RuntimeError("打包服务启动超时")
                     data = boot.json()
-                    assert data["service"]=="mingjian-web" and data["version"]=="1.1.0"
+                    assert data["service"]=="mingjian-web" and data["version"]==VERSION
                     client.headers["X-Mingjian-Session"] = data["token"]
                     checks.append({"check":"packaged_service_boot","passed":True})
                     assert 'id="root"' in client.get("/").text
@@ -78,8 +79,8 @@ def verify():
                 if process.poll() is None:
                     process.terminate()
                     process.wait(timeout=10)
-    result={"version":"1.1.0","passed":all(c["passed"] for c in checks),"checks":checks,
-            "ocr_live_test":"用户明确要求推迟至后续优化；未调用远程 OCR 或 AI"}
+    result={"version":VERSION,"passed":all(c["passed"] for c in checks),"checks":checks,
+            "ocr_live_test":"本打包自检不发送外部模型请求；真实模型测试单独记录"}
     (ROOT/"docs/web-bundle-check.json").write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps(result,ensure_ascii=False))
 
