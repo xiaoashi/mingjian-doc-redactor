@@ -1,0 +1,27 @@
+# Runtime data, credentials and personal copyright forms never belong here.
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.playwright-cli/
+workspace/
+软件著作权申请资料/
+*.sqlite3
+*.sqlite3-*
+*.log
+build/
+dist/
+release*/
+wheelhouse*/
+src/mingjian/resources/fonts/*.ttf
+src/mingjian/resources/ocr-samples/
+fixtures/acceptance/
+fixtures/ocr/
+fixtures/annotations.json
+packaging/*.png
+packaging/*.icns
+.DS_Store

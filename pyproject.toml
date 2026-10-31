@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mingjian"
+version = "1.2.0"
+description = "明鉴文档敏感信息识别与脱敏系统"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "PySide6-Essentials>=6.8,<6.9",
+  "python-docx>=1.1,<2",
+  "pdfplumber>=0.11,<0.12",
+  "reportlab>=4.2,<5",
+  "matplotlib>=3.9,<4",
+  "defusedxml>=0.7,<0.8",
+  "fonttools>=4.55,<5",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.30,<1",
+  "python-multipart>=0.0.20,<1",
+  "httpx>=0.28,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "pytest-qt>=4.4,<5", "pyinstaller>=6,<7", "ruff>=0.11,<1"]
+
+[project.scripts]
+mingjian = "mingjian.app.main:main"
+mingjian-web = "mingjian.web.launcher:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+qt_api = "pyside6"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mingjian"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9", "F"]
