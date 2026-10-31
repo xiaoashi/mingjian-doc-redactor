@@ -89,11 +89,13 @@ def parse_docx(path, limits, cancel=None):
                     blocks.append(Block(text, kind, {**locator, "paragraph": index + 1,
                         "auto_numbered": child.find(".//" + W + "numPr") is not None}))
             elif child.tag == W + "tbl":
+                table_path = child.getroottree().getpath(child)
                 for row, tr in enumerate(child.findall(W + "tr")):
                     # Actual XML tc nodes are unique; merged cells are never iterated twice.
                     for col, tc in enumerate(tr.findall(W + "tc")):
                         walk(tc, "table" if kind == "paragraph" else kind,
-                             {**locator, "table": index + 1, "row": row + 1, "column": col + 1})
+                             {**locator, "table": index + 1, "table_path": table_path,
+                              "row": row + 1, "column": col + 1})
             elif child.tag == W + "sdt":
                 warnings.append("存在内容控件：仅支持的正文已读取，请核实覆盖")
                 content = child.find(W + "sdtContent")

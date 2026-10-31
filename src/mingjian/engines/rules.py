@@ -117,6 +117,14 @@ def scan(blocks, config, document_id, cancel=None):
     trees = [(cs, Automaton([(w["word"] if cs else w["word"].lower(), w)
               for w in words if w.get("case_sensitive", True) == cs])) for cs in (True, False)]
     previous_number = None
+    # A neighboring table label is context, never a source of joined digits.
+    # Part + full XML path prevents crossing nested tables or header stories.
+    cells = {}
+    for item in blocks:
+        loc = item.locator
+        if loc.get("table_path") and loc.get("row") and loc.get("column"):
+            key = (loc.get("part", "body"), loc["table_path"], loc["row"], loc["column"])
+            cells.setdefault(key, []).append(item.text)
 
     def accept(candidate, text):
         nonlocal excluded
@@ -161,12 +169,18 @@ def scan(blocks, config, document_id, cancel=None):
                         if len(match.group()) <= 254 and len(match.group().split("@")[0]) <= 64:
                             ranges.append((*match.span(), "本地部分、域名、长度与边界结构通过；未联网验证存在性"))
                 elif rule_id == "bank":
+                    loc = block.locator
+                    neighbor = ""
+                    if loc.get("table_path") and loc.get("column", 0) > 1:
+                        key = (loc.get("part", "body"), loc["table_path"], loc["row"], loc["column"] - 1)
+                        neighbor = "\n".join(cells.get(key, [])).strip()
+                    table_label = bool(re.fullmatch(r"(?:银行卡(?:号)?|银行账户|收款账户|卡号|bank\s*card(?:\s*(?:no\.?|number))?)\s*[:：]?", neighbor, re.I))
                     for match in re.finditer(r"(?<![0-9])[0-9](?:[ -]?[0-9]){11,18}(?![ -]?[0-9])", text):
                         digits = re.sub("[ -]", "", match.group())
                         context = text[max(0, match.start()-16):match.start()]
                         if (config.get("bank_min", 16) <= len(digits) <= config.get("bank_max", 19)
-                                and luhn(digits) and re.search(r"银行卡|卡号|银行账户|收款账户|bank|card", context, re.I)):
-                            ranges.append((*match.span(), "长度与 Luhn 校验通过且邻近银行卡上下文；仅为疑似卡号"))
+                                and luhn(digits) and (table_label or re.search(r"银行卡|卡号|银行账户|收款账户|bank|card", context, re.I))):
+                            ranges.append((*match.span(), "长度、Luhn及同块或同表格行左邻银行卡标签通过；仅为疑似卡号"))
                 elif rule_id == "punctuation":
                     if "```" not in text and not text.lstrip().startswith(("http://", "https://", "def ", "//")):
                         ranges.extend((m.start(), m.end(), "限定连续相同标点；省略号和句点不参与")

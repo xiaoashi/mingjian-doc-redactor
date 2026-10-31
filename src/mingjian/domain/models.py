@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 APP_NAME = "明鉴文档敏感信息识别与脱敏系统"
 VERSION = "1.2.0"
-PARSER_VERSION = "1.0.0"
+PARSER_VERSION = "1.2.0"
 SCHEMA_VERSION = 1
 
 
